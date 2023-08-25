@@ -17,21 +17,13 @@ namespace RestServerlessFuncApp
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            try
-            {
-                var keyVaultUrl = new Uri(Environment.GetEnvironmentVariable("KeyVaultUrl"));
-                var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
+            var keyVaultUrl = new Uri(Environment.GetEnvironmentVariable("KeyVaultUrl"));
+            var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
 
-                string connectionString = secretClient.GetSecret("TodosDbConnection").Value.Value;
+            string connectionString = secretClient.GetSecret("TodosDbConnection").Value.Value;
 
-                builder.Services.AddDbContext<AppDataContext>(options => options.UseSqlServer(connectionString));
-                builder.Services.AddScoped<ITodosService, TodosService>();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
+            builder.Services.AddDbContext<AppDataContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddScoped<ITodosService, TodosService>();
         }
     }
 }
